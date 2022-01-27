@@ -1,0 +1,772 @@
+<style>  
+.product-teplate-product-section .swiper-container-horizontal>.swiper-pagination-bullets,.product-teplate-product-section .swiper-button-next.swiper-button-black ,.product-teplate-product-section .swiper-button-prev.swiper-button-black {
+    display: none;
+}  
+  [type="radio"]:not(:checked) + span, [type="radio"]:checked + span {
+    position: relative;
+    padding-left: 0!important;
+    cursor: pointer;
+    display: inline-block;
+    height: 25px;
+    line-height: unset!important;
+    color: black;
+    font-size: 12px;
+    -webkit-transition: .28s ease;
+    transition: .28s ease;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+  .bold-ro__bold-active {
+    background-color: #88cf41 !important;
+    border-color: #88cf41 !important;
+    border-width: 1px;
+    border-style: solid;
+    padding: 1px 10px;
+    border-radius: 2px;
+}
+  .bold-ro__radio-div.bold-ro__recurring-div.bold-ro__sub {
+    background-color: #F2F1EB;
+    border-color: #F2F1EB;
+    border-width: 1px;
+    border-style: solid;
+    padding: 1px 14px;
+    border-radius: 2px;
+    display: inline-block;
+    float: left;
+}
+  .bold-ro__bold-active span.bold-ro__recurring-text {
+    color: white;
+}
+  .bold-ro__bold-active span.bold-ro__one-time-purchase {
+    color: white;
+}
+.bold-ro__one-time-div {
+    display: inline-block;
+    float: left;
+    background: #F2F1EB;
+    border: 1px solid #F2F1EB;
+    padding: 1px 8px;
+    border-radius: 4px;
+}
+@media screen and (min-width: 421px) {  
+  .bold-ro__one-time-div {
+    width: calc(50% - 12px);
+    margin-right: 14px;
+    text-align: center;
+  }
+}
+span.bold-ro__initial-discount-price {
+    display: none;
+}
+  [type="radio"] + span:before, [type="radio"] + span:after{
+    display:none;
+  }
+  .bold-ro__recurring-title {
+    display: none;
+  }
+  .bold-ro__frequency-div {
+    display: none;
+  }
+.calocrub-complete-kit .product-details-contents .promo-area {
+    display: none;
+    width: calc(100% + 20px);
+    margin: -10px;
+    position: relative;
+    text-align: center;
+  	background: {% if section.settings.promo_bg_color != blank %}{{ section.settings.promo_bg_color }}{% else %}red{% endif %};
+}
+.calocrub-complete-kit .product-details-contents .promo-area .text {
+  	color: {% if section.settings.promo_text_color != blank %}{{ section.settings.promo_text_color }}{% else %}red{% endif %};
+    font-weight: bold;
+}
+{% if section.settings.promo_text != blank %}
+.calocrub-complete-kit .product-details-contents h2.l-product__title.h3 {
+    padding-top: 20px;
+}
+{% endif %}
+</style>
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign product_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+<div class="calocrub-complete-kit">
+  <span id="top"></span>
+  <article class="l-product p-new" id="product" itemscope itemtype="http://schema.org/Product">
+    <meta itemprop="name" content="{{ product.title }}">
+    <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+    <meta itemprop="image" content="{{ product.featured_image.src | img_url: '800x' }}">
+    <div class="container">
+      <div class="l-product-benefit__wrap p-new">
+        <div class="product-teplate-product-section">
+          <div class="product-image-sections">
+            <div class="product-img-content">
+              {% if product.images.size > 1 %}
+              <div class="swiper-container">
+                <div id="variant-imag{{ forloop.index }}" class="swiper-wrapper">
+                  {% for image in product.images %}
+                  <div class="swiper-slide" >
+                    <img class="p-image" src="{{ image | product_img_url: '2048x'}}" 
+                         srcset="{{ image | product_img_url: '2048x'}}"
+                         alt="{{ image.alt | escape }}"/>
+                  </div>
+                  {% endfor %}
+                </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination swiper-pagination-black"></div>
+                <!-- Add Arrows -->
+                <div class="swiper-button-next swiper-button-black"></div>
+                <div class="swiper-button-prev swiper-button-black"></div>
+              </div>
+              <script>
+                var swiper = new Swiper('.swiper-container', {
+                  spaceBetween: 30,
+                  pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                  },
+                  navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                  },
+                });
+              </script>
+              {% else %}
+              <img class="p-image" src="{{ product_image | img_url: '2048x' }}"
+                   alt="{{ product_image.alt | escape }}"
+                   width="500" />
+              {% endif %}
+            </div>
+          </div>
+          <div class="product-details-sections">
+            <div class="product-details-contents">
+              {% comment %}The class "product-form" is required by ReCharge{% endcomment %}
+              <form action="/cart/add"
+                    method="post"
+                    enctype="multipart/form-data"
+                    class="l-form product-form"
+                    data-section="{{ section.id }}"
+                    id="js-product-form">
+                <input class="change-var-id" type="hidden"
+                       name="id"
+                       value="{{ product.variants.first.id }}"/>               
+                {% if section.settings.promo_text != blank %}
+                  <div class="promo-area">
+                    <div class="text">{{ section.settings.promo_text }}</div>
+                  </div>
+                {% endif %}
+                <div class="l-form__field l-form__field--fw">
+                  <h2 class="l-product__title h3">{{ product.title | upcase }}</h2>
+                </div>
+                <div class="l-form__field l-form__field--fw">
+                   <div class="product-price-sec">
+                      <div class="price-sec-div">
+                       <h2 class="l-product__price h3">{{ product.price | money }}</h2>
+                        <p style="display:none" class="monthly-text">per month</p>
+                      </div>
+                     {% if section.settings.show_discounted_amount %}
+                    <div class="price-subs-div" style="display:none">
+                        <p class="cross-price-data">
+                          <span class="main-price-cross"></span>
+                          <span class="discount-text"></span>
+                      	</p>
+                    </div>
+                     {% endif %}
+                  </div>
+                </div>
+                <div class="subscription-data-section">
+
+                  <div class="one-time-subscription-data">
+                    {% if section.settings.afterpay == true %}
+                    <p class="one-time-content"><span>4 PAYMENTS OF </span><span class="emi-one-price"></span><span class="after-pay-img"><img src="{{ section.settings.afterpay_img | img_url: 'master' }}"></span></p>
+                    {% endif %}
+                    {% if section.settings.laybuy == true %}
+                    <p class="one-time-content"><span>6 PAYMENTS OF </span><span class="emi-two-price"></span><span class="lay-pay-img"><img src="{{ section.settings.laybuy_img | img_url: 'master' }}"></span></p>
+                    {% endif %}
+                  </div>
+
+                  <div class="new-on-subscription-data" style="display:none">
+                    {% if section.settings.feature-subheading_a1 != blank or section.settings.feature-subheading_a2 != blank or section.settings.feature-subheading-a3 != blank %}
+                    <div class="l-form__field l-form__field--fw">
+                      <span class="l-product__sub-type">
+                        <img src="{% if section.settings.feature_icon == blank %}{{ section.settings.feature_icon_alt | img_url: 'master' }}{% else %}{{ section.settings.feature_icon }}{% endif %}"
+                             alt="{% if section.settings.feature_icon == blank %}{{ section.settings.feature_icon_alt.alt | escape }}{% endif %}" 
+                             />
+                        {{ section.settings.feature-subheading_a1 }}
+                      </span>
+                      <span class="l-product__sub-type">
+                        <img src="{% if section.settings.feature_icon == blank %}{{ section.settings.feature_icon_alt | img_url: 'master' }}{% else %}{{ section.settings.feature_icon }}{% endif %}"
+                             alt="{% if section.settings.feature_icon == blank %}{{ section.settings.feature_icon_alt.alt | escape }}{% endif %}" 
+                             />
+                        {{ section.settings.feature-subheading_a2 }}
+                      </span>
+                      <span class="l-product__sub-type">
+                        <img src="{% if section.settings.feature_icon == blank %}{{ section.settings.feature_icon_alt | img_url: 'master' }}{% else %}{{ section.settings.feature_icon }}{% endif %}"
+                             alt="{% if section.settings.feature_icon == blank %}{{ section.settings.feature_icon_alt.alt | escape }}{% endif %}" 
+                             />
+                        {{ section.settings.feature-subheading-a3 }}
+                      </span>
+
+                      {% if section.settings.feature-subheading-am != blank %}
+                      <span class="l-product__sub-type hide-screen-medium-up">
+                        <img src="{% if section.settings.feature_icon == blank %}{{ section.settings.feature_icon_alt | img_url: 'master' }}{% else %}{{ section.settings.feature_icon }}{% endif %}"
+                             alt="{% if section.settings.feature_icon == blank %}{{ section.settings.feature_icon_alt.alt | escape }}{% endif %}" 
+                             />
+                        {{ section.settings.feature-subheading-am }}
+                      </span>
+                      {% endif %}
+
+                    </div>
+                    {% endif %}
+                  </div>
+
+
+                  <div class="whats-includes">
+                    <h2 class="includes-text">WHAT'S INCLUDED</h2>
+                  </div>
+
+                  <div class="on-subscription-data">
+                    {% if section.settings.feature-subheading-01 != blank or section.settings.feature-subheading-02 != blank or section.settings.feature-subheading-03 != blank %}
+                    <div class="l-form__field l-form__field--fw">
+                      <span class="l-product__sub-type">
+                        <img src="{% if section.settings.feature-icon-url == blank %}{{ section.settings.feature-icon | img_url: 'master' }}{% else %}{{ section.settings.feature-icon-url }}{% endif %}"
+                             alt="{% if section.settings.feature-icon-url == blank %}{{ section.settings.feature-icon.alt | escape }}{% endif %}" 
+                             />
+                        {{ section.settings.feature-subheading-01 }}
+                      </span>
+                      <span class="l-product__sub-type">
+                        <img src="{% if section.settings.feature-icon-url == blank %}{{ section.settings.feature-icon | img_url: 'master' }}{% else %}{{ section.settings.feature-icon-url }}{% endif %}"
+                             alt="{% if section.settings.feature-icon-url == blank %}{{ section.settings.feature-icon.alt | escape }}{% endif %}" 
+                             />
+                        {{ section.settings.feature-subheading-02 }}
+                      </span>
+                      <span class="l-product__sub-type">
+                        <img src="{% if section.settings.feature-icon-url == blank %}{{ section.settings.feature-icon | img_url: 'master' }}{% else %}{{ section.settings.feature-icon-url }}{% endif %}"
+                             alt="{% if section.settings.feature-icon-url == blank %}{{ section.settings.feature-icon.alt | escape }}{% endif %}" 
+                             />
+                        {{ section.settings.feature-subheading-03 }}
+                      </span>
+
+                      {% if section.settings.feature-subheading-m != blank %}
+                      <span class="l-product__sub-type hide-screen-medium-up">
+                        <img src="{% if section.settings.feature-icon-url == blank %}{{ section.settings.feature-icon | img_url: 'master' }}{% else %}{{ section.settings.feature-icon-url }}{% endif %}"
+                             alt="{% if section.settings.feature-icon-url == blank %}{{ section.settings.feature-icon.alt | escape }}{% endif %}" 
+                             />
+                        {{ section.settings.feature-subheading-m }}
+                      </span>
+                      {% endif %}
+
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div class="custom_variant_section">
+                  <div class="custom_variant_data">
+                    <div class="product-qty-lev quantity-label-text">
+                      <p>CHOOSE QTY:</p>
+                    </div>
+                        {% for variant in product.variants %}
+                          {% if variant.available %}
+                          {% assign mainprice = variant.price %} 
+                          {% assign discount_amount = 100 | minus: section.settings.bold_discount_amount | divided_by: 100 %}
+                    	  {% assign Sub_price = mainprice | times: discount_amount %}
+                          <div id="hidden-variant{{ forloop.index }}"
+                               class="product-qty-lev product-variants-se" 
+                               data-img="{{variant.image.src | img_url: 'master' }}">
+                            <a data="{{ forloop.index }}"
+                               id="activ{{ forloop.index }}" 
+                               data-sku="{{ variant.sku }}"
+                               class="variant-btn-se {% if forloop.first %}active{% endif %}" 
+                               data-price="{{ variant.price | divided_by: 100.00 }}"
+                               value="{{ variant.id }}"
+                               data-sub-price= "{{ Sub_price | divided_by: 100.00 | round: 2 }}">
+                              {% if forloop.last %}{{ variant.title | prepend: "10% off "}}{% else %}{{ variant.title }}{% endif %}
+                               <p class="hide sub-price-{{ forloop.index }}" itemprop="price" content="{{ Sub_price | divided_by: 100.00 | round: 2 }}" style="display:none;">{{ Sub_price | round: 2 | money }}</p>
+                               <p class="hide main-price-{{ forloop.index }}" itemprop="price" content="{{ variant.price | divided_by: 100.00 }}" style="display:none;">{{ variant.price | money }}</p>
+                            </a> 
+                          </div>
+                          {% else %}
+                          <div class="product-qty-lev product-variants-se" data-id="{{ variant.id }}">
+                            <a  class="variant-btn-se" disabled="disabled">
+                              {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                            </a>
+                          </div>
+                          {% endif %}
+                        {% endfor %}
+                  </div> 
+                </div>
+
+                <div class="l-form__field l-form__field--fw hide">
+                  {% capture quantity_input %}
+                  <label for="Quantity" class="l-form__label sr-only">{{ 'products.product.quantity' | t }}</label>
+                  <input class="l-form__input"
+                         type="hidden"
+                         id="Quantity"
+                         name="quantity"
+                         value="1"
+                         min="1"
+                         max="100"
+                         pattern="[0-9]*" />
+                  {% endcapture %}
+                  {{ quantity_input }}
+                </div>
+
+                <div class="custom_variant_section_subscription">
+                  <div class="choose-plan">
+                    <p>CHOOSE PLAN:</p>
+                  </div>
+                	<div class="ro_widget"></div>
+                </div>
+
+                <div class="product-single__add-to-cart">
+                  <button type="submit" name="add" id="AddToCart" class="btn">
+                    <span id="AddToCartText">ADD TO CART</span>
+                  </button>
+                </div> 
+                <div class="paypal-main">
+                      <div class="paypal-image-area">
+                        <span class="text-image">
+                          <span class="text">We accept&nbsp;</span>
+                          <span class="image"><img src="https://cdn.shopify.com/s/files/1/0021/9879/8395/files/Paypal_240x240.png?v=1573164690"></span>
+                        </span>
+                      </div>
+       			 </div>
+                
+                <span class=" stamped-product-reviews-badge" data-product-sku="{{ product.handle }}" data-id="{{ product.id }}" data-product-type="{{product.type}}" data-product-title="{{product.title}}"  style="display:block;">{{ product.metafields.stamped.badge }}</span>
+                
+                {% if section.settings.show-number-of-capsules %}
+                <div class="l-form__field l-form__field--fw">
+                  <p class="l-product__num-capsules">
+                    {% include 'pill.svg' %}
+                    {{ section.settings.tab_count }}
+                  </p>
+                </div>
+                {% endif %}
+
+              </form>
+              {% if pages.ingredients %}
+              <a href="#ingredients" class="l-product__details__link hide-screen-medium-up"><br>{{ 'products.product.learn_more' | t }}</a>
+              {% endif %}
+              {% if section.settings.show-footnotes %}
+              <p class="l-product__footnotes">{{ 'products.product.footnotes' | t }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </article>
+
+  <div class="c-mini-product" id="js-mini-product">
+    <div class="container container--xlarge">
+      <a href="/" class="c-mini-product__logo" >
+        <img src="{{ 'cal-curb-logo.svg' | asset_url }}" alt="Calocurb product" width="172"
+             height="35"/>
+      </a>
+      <a href="#top" class="c-mini-product__back-top hide-screen-small">
+        {% include 'arrow-up.svg' %} {{ 'general.accessibility.back_to_top' | t }}
+      </a>
+      <div class="c-mini-product__img">
+        <img src="{{ product_image | img_url: '55x' }}"
+             alt="{{ product_image.alt | escape }}"
+             width="55"/>
+      </div>
+      <h4 class="c-mini-product__price">
+        {{ product_price | replace: ' ', '' | strip | strip_newlines }}
+      </h4>
+      {{ quantity_input }}
+      <button class="btn c-mini-product__add-btn" id="js-mini-product-add-btn">{{ 'products.product.add_to_cart' | t }}</button>
+    </div>
+  </div>
+</div>
+
+<script> 
+  $(document).ready(function(){
+    function ShopifySubValue(SSVprice,SSVcountry,SVvar_id,SVimg_url){   
+      $('.price-subs-div').show();
+      $('.monthly-text').show();
+      $('.new-on-subscription-data').show();
+      $('.one-time-subscription-data').hide();
+      $('.change-var-id').attr('value',SVvar_id);
+      $('#variant-imag img').attr('src',SVimg_url);
+      $('#variant-imag img').attr('srcset',SVimg_url);
+      var Subprice = SSVprice;
+        var dataSymbol = {
+              'CAD': '$',
+              'EUR': '€',
+              'GBP': '£',
+              'HKD': 'HK$',
+              'SGD': '$',
+              'USD': '$',
+              'ILS': '₪',
+              'INR': '₹',
+              'JPY': '¥',
+              'KRW': '₩',
+              'NGN': '₦',
+              'PHP': '₱',
+              'PLN': 'zł',
+              'PYG': '₲',
+              'THB': '฿',
+              'UAH': '₴',
+              'VND': '₫',
+            }
+            // the input which contains the code
+            $.each(dataSymbol, function(i, v){
+                if(i === SSVcountry){
+                     $('.l-product__price.h3').text(v + Subprice + ' ' + SSVcountry);
+                   return;
+                }
+            });
+      }  
+    
+    function ShopifyValue(SVprice,SVvar_id,SVimg_url,SVcountry){
+        $('.price-subs-div').hide();
+        $('.monthly-text').hide();
+        $('.new-on-subscription-data').hide();
+        $('.one-time-subscription-data').show();
+        $('.change-var-id').attr('value',SVvar_id);
+        $('#variant-imag img').attr('src',SVimg_url);
+        $('#variant-imag img').attr('srcset',SVimg_url); 
+        var pr = SVprice;
+        $('.main-SVprice-cross').text(pr);
+        var four_months = pr/4;
+        var six_months = pr/6; 
+        
+        var dataSymbol = {
+              'CAD': '$',
+              'EUR': '€',
+              'GBP': '£',
+              'HKD': 'HK$',
+              'SGD': '$',
+              'USD': '$',
+              'ILS': '₪',
+              'INR': '₹',
+              'JPY': '¥',
+              'KRW': '₩',
+              'NGN': '₦',
+              'PHP': '₱',
+              'PLN': 'zł',
+              'PYG': '₲',
+              'THB': '฿',
+              'UAH': '₴',
+              'VND': '₫',
+            }
+            // the input which contains the code
+            $.each(dataSymbol, function(i, v){
+                if(i === SVcountry){
+                      var data =  v + four_months.toFixed(2) + ' ' + SVcountry; 
+                      var data1 = v + six_months.toFixed(2) + ' ' + SVcountry; 
+                      $('.one-time-content .emi-one-price').text(data);
+                      $('.one-time-content .emi-two-price').text(data1);
+                      $('.l-product__price.h3').text(v + pr + ' ' + SVcountry);
+                   return;
+                }
+            });
+      }  
+ setTimeout(function(){
+      var country = $('.currentCurrency .name').text();
+	  var ProductGird = $('.custom_variant_section .custom_variant_data');
+      var pricet = $('.custom_variant_section .main-price-1 .money').text();
+      var price = parseFloat(pricet.match(/([0-9]+\.[0-9]{1,2})/g));
+      var FVID_url = $('.custom_variant_section .custom_variant_data #hidden-variant1').attr('data-img');
+      var var_id =  $('.custom_variant_section .custom_variant_data #activ1').attr('value');
+      var mainsl = $('.custom_variant_section .custom_variant_data #activ1').attr('data');
+      var SelectoptionFVID = $('.custom_variant_section .custom_variant_data #activ1').attr('value');
+      var SelectoptionSVID = $('.custom_variant_section .custom_variant_data #activ2').attr('value');
+      var str = window.location.href;
+      var strFVID = window.location.protocol + '//' + window.location.host + window.location.pathname + '?variant=' + SelectoptionFVID;
+      var strSVID = window.location.protocol + '//' + window.location.host + window.location.pathname + '?variant=' + SelectoptionSVID;
+      var subsl = $('.bold-ro__one-time-div .bold-ro__recurring-lbl input').attr('value');
+          if(str == strFVID) {
+              price = price;
+              FVID_url = FVID_url;
+              var_id =  var_id;
+              mainsl = mainsl;
+              $('.change-var-id').attr('value',SelectoptionFVID);
+              $('#variant-imag img').attr('src',FVID_url);
+              $('#variant-imag img').attr('srcset',FVID_url);
+              $('.custom_variant_section .custom_variant_data #activ1').addClass('active');
+              $('.custom_variant_section .custom_variant_data #activ2').removeClass('active');
+             ShopifyValue(price,var_id,FVID_url,country);
+          }
+           if(str == strSVID) {
+              pricet = $('.custom_variant_section .main-price-2 .money').text();
+              price = parseFloat(pricet.match(/([0-9]+\.[0-9]{1,2})/g));
+              var SVID_url = $('.custom_variant_section .custom_variant_data #hidden-variant2').attr('data-img');
+              var_id = $('.custom_variant_section .custom_variant_data #activ2').attr('value');
+              mainsl = $('.custom_variant_section .custom_variant_data #activ2').attr('data');
+              $('.change-var-id').attr('value',SelectoptionSVID);
+              $('#variant-imag img').attr('src',SVID_url);
+              $('#variant-imag img').attr('srcset',SVID_url);
+              $('.custom_variant_section .custom_variant_data #activ1').removeClass('active');
+              $('.custom_variant_section .custom_variant_data #activ2').addClass('active');
+              ShopifyValue(price,var_id,SVID_url,country);
+          }
+      $(ProductGird).each(function(i, item){
+        $(item).click(function(e){
+          e.preventDefault();
+            if(subsl == 0){
+               pricet = e.target.children[1].children[0].innerText;
+               price = parseFloat(pricet.match(/([0-9]+\.[0-9]{1,2})/g));
+          	   var_id = e.target.attributes[5].nodeValue;
+               mainsl = e.target.attributes[0].nodeValue;
+           var img_url = e.target.parentElement.attributes[2].nodeValue;
+           var newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?variant=' + var_id;
+               country = $('.currentCurrency .name').text();
+               ShopifyValue(price,var_id,img_url,country);
+            }
+            if(subsl == 2){
+               pricet = e.target.children[0].children[0].innerText;
+               price = parseFloat(pricet.match(/([0-9]+\.[0-9]{1,2})/g));
+          	   var_id = e.target.attributes[5].nodeValue;
+               mainsl = e.target.attributes[0].nodeValue;
+           var img_url = e.target.parentElement.attributes[2].nodeValue;
+           var newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?variant=' + var_id;
+               country = $('.currentCurrency .name').text();
+               ShopifySubValue(price,country,var_id,img_url);
+            }
+            if(var_id == SelectoptionFVID){
+               $('.custom_variant_section .custom_variant_data #activ1').addClass('active');
+               $('.custom_variant_section .custom_variant_data #activ2').removeClass('active');
+       		 	window.history.replaceState({path: newurl}, '', newurl);
+            }
+            if(var_id == SelectoptionSVID){
+               $('.custom_variant_section .custom_variant_data #activ1').removeClass('active');
+               $('.custom_variant_section .custom_variant_data #activ2').addClass('active');
+                window.history.replaceState({path: newurl}, '', newurl);
+            }
+        });
+      });
+      $('.bold-ro__recurring-div').click(function(e){
+               subsl = e.currentTarget.children[0].children[0].attributes[0].nodeValue;
+               country = $('.currentCurrency .name').text();
+                  if (mainsl == 1) {
+                     var subprice = $('.custom_variant_section .sub-price-1 .money').text();
+                     var subpriced = parseFloat(subprice.match(/([0-9]+\.[0-9]{1,2})/g));
+                          ShopifySubValue(subpriced,country);
+                  }
+                  if(mainsl == 2) {
+                     var subprice = $('.custom_variant_section .sub-price-2 .money').text();
+                     var subpriced = parseFloat(subprice.match(/([0-9]+\.[0-9]{1,2})/g));
+                          ShopifySubValue(subpriced,country);
+                  }
+        		console.log(subsl,subprice,subpriced);
+      });    
+
+      $('.bold-ro__one-time-div').click(function(e){
+                subsl = e.currentTarget.children[0].children[0].attributes[1].nodeValue;
+                country = $('.currentCurrency .name').text();
+        if (mainsl == 1) {
+           var onetimeprice = $('.custom_variant_section .main-price-1 .money').text();
+           var onetimepriced = parseFloat(onetimeprice.match(/([0-9]+\.[0-9]{1,2})/g));
+           var onetimeimg_url = $('.custom_variant_section .custom_variant_data #hidden-variant1').attr('data-img');
+           var onetimevar_id =  $('.custom_variant_section .custom_variant_data #activ1').attr('value');
+                  ShopifyValue(onetimepriced,onetimevar_id,onetimeimg_url,country);
+        }
+        if(mainsl == 2) {
+           var onetimeprice = $('.custom_variant_section .main-price-2 .money').text();
+           var onetimepriced = parseFloat(onetimeprice.match(/([0-9]+\.[0-9]{1,2})/g));
+           var onetimeSVID_url = $('.custom_variant_section .custom_variant_data #hidden-variant2').attr('data-img');
+           var onetimevar_id = $('.custom_variant_section .custom_variant_data #activ2').attr('value');
+                  ShopifyValue(onetimepriced,onetimevar_id,onetimeimg_url,country);
+        }
+      });
+      if(str != strFVID || str != strSVID) {
+      	ShopifyValue(price,var_id,FVID_url,country);
+      }
+       $('.BOLD-mc-picker .currency-dropdown-option ').click(function(){
+         country = $('.currentCurrency .name').text();
+         if (mainsl == 1 && subsl == 0) {
+           var onetimeprice = $('.custom_variant_section .main-price-1 .money').text();
+           var onetimepriced = parseFloat(onetimeprice.match(/([0-9]+\.[0-9]{1,2})/g));
+           var onetimeimg_url = $('.custom_variant_section .custom_variant_data #hidden-variant1').attr('data-img');
+           var onetimevar_id =  $('.custom_variant_section .custom_variant_data #activ1').attr('value');
+           ShopifyValue(onetimepriced,onetimevar_id,onetimeimg_url,country);
+         }
+         if (mainsl == 1 && subsl == 2) {
+           var subprice = $('.custom_variant_section .sub-price-1 .money').text();
+           var subpriced = parseFloat(subprice.match(/([0-9]+\.[0-9]{1,2})/g));
+           ShopifySubValue(subpriced,country);
+         }
+         if(mainsl == 2 && subsl == 0) {
+           var onetimeprice = $('.custom_variant_section .main-price-2 .money').text();
+           var onetimepriced = parseFloat(onetimeprice.match(/([0-9]+\.[0-9]{1,2})/g));
+           var onetimeSVID_url = $('.custom_variant_section .custom_variant_data #hidden-variant2').attr('data-img');
+           var onetimevar_id = $('.custom_variant_section .custom_variant_data #activ2').attr('value');
+           ShopifyValue(onetimepriced,onetimevar_id,onetimeimg_url,country);
+         }
+         if(mainsl == 2 && subsl == 2) {
+           var subprice = $('.custom_variant_section .sub-price-2 .money').text();
+           var subpriced = parseFloat(subprice.match(/([0-9]+\.[0-9]{1,2})/g));
+           ShopifySubValue(subpriced,country);
+         }
+       });
+      },1000);
+  });
+</script>
+{% schema %}
+{
+"name": "New Product Template",
+"settings": [
+{
+"type": "header",
+"content": "Discount Amount"
+},
+{
+"type": "text",
+"id": "bold_discount_amount",
+"label": "Discount Amount in percentage",
+"info": "16.68% = 16.68"
+},
+{
+"type": "header",
+"content": "Promo Text"
+},
+{
+"type": "textarea",
+"id": "promo_text",
+"label": "Text"
+},
+{
+"type": "color",
+"id": "promo_text_color",
+"label": "Text color"
+},
+{
+"type": "color",
+"id": "promo_bg_color",
+"label": "Background color"
+},
+{
+"type": "header",
+"content": "Product part"
+},
+{
+"type": "checkbox",
+"id": "show-number-of-capsules",
+"label": "Enable number of capsules"
+},
+{
+"type": "checkbox",
+"id": "show_discounted_amount",
+"label": "Enable Discounted amount"
+},
+{
+"type": "image_picker",
+"id": "feature_icon_alt",
+"label": "Feature - icon"
+},
+{
+"type": "url",
+"id": "feature_icon",
+"label": "Feature - icon (Svg)"
+},
+{
+"type": "text",
+"id": "feature-subheading_a1",
+"label": "Feature - subheading a1",
+"default": "Lorem ipsum"
+},
+{
+"type": "text",
+"id": "feature-subheading_a2",
+"label": "Feature - subheading a2",
+"default": "Lorem ipsum"
+},
+{
+"type": "text",
+"id": "feature-subheading-a3",
+"label": "Feature - subheading 03",
+"default": "Lorem ipsum"
+},
+{
+"type": "text",
+"id": "feature-subheading-am",
+"label": "Feature - subheading (mobile only)",
+"default": "Lorem ipsum"
+},
+
+
+
+{
+"type": "image_picker",
+"id": "feature-icon",
+"label": "Feature - icon"
+},
+{
+"type": "url",
+"id": "feature-icon-url",
+"label": "Feature - icon (Svg)"
+},
+{
+"type": "text",
+"id": "feature-subheading-01",
+"label": "Feature - subheading 01",
+"default": "Lorem ipsum"
+},
+{
+"type": "text",
+"id": "feature-subheading-02",
+"label": "Feature - subheading 02",
+"default": "Lorem ipsum"
+},
+{
+"type": "text",
+"id": "feature-subheading-03",
+"label": "Feature - subheading 03",
+"default": "Lorem ipsum"
+},
+{
+"type": "text",
+"id": "feature-subheading-m",
+"label": "Feature - subheading (mobile only)",
+"default": "Lorem ipsum"
+},
+{
+"type": "checkbox",
+"id": "show-footnotes",
+"label": "Enable footnotes"
+},
+{
+"type": "checkbox",
+"id": "show-product-description",
+"label": "Enable product description"
+},
+{
+"type": "textarea",
+"id": "custom-product-description",
+"label": "Custom product description",
+"default": "Lorem ipsum"
+},
+{
+"type":"text",
+"id":"tab_count",
+"label":"Pills Text"
+},
+{
+"type": "checkbox",
+"id": "afterpay",
+"label": "After Pay",
+"info": "Hide and Show After Pay Option"
+},
+{
+"type": "checkbox",
+"id": "laybuy",
+"label": "Lay Buy",
+"info": "Hide and Show LAY BUY Option"
+},
+{
+"type": "image_picker",
+"id": "afterpay_img",
+"label": "Afterpay Image"
+},
+{
+"type": "image_picker",
+"id": "laybuy_img",
+"label": "Lay Buy Image"
+}
+]
+}
+{% endschema %}
